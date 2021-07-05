@@ -2,36 +2,9 @@ package candy.clean;
 
 public class Color {
 	private String colorStr;
-	private BackgroundColor backgroundColor;
-
-	public Color(int colorNumber) throws CandyCleanException {
-		this.backgroundColor = BackgroundColor.values()[colorNumber];
-		this.setColorWithBackground();
-	}
 
 	public Color(BackgroundColor backgroundColor) throws CandyCleanException {
-		this.backgroundColor = backgroundColor;
-		this.setColorWithBackground();
-	}
-
-	public String getColorStr() {
-		return this.colorStr;
-	}
-
-	public void setColorStr(String colorStr) {
-		this.colorStr = colorStr;
-	}
-
-	public BackgroundColor getBackgroundColor() {
-		return this.backgroundColor;
-	}
-
-	public void setBackgroundColor(BackgroundColor backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-
-	private void setColorWithBackground() throws CandyCleanException {
-		switch (this.backgroundColor) {
+		switch (backgroundColor) {
 			case RED:
 				this.colorStr = Constants.RED;
 				break;
@@ -60,9 +33,27 @@ public class Color {
 				this.colorStr = Constants.WHITE;
 				break;
 
+			case BLACK:
 			default:
-				throw new CandyCleanException("Incorrect color");
+				this.colorStr = Constants.BLACK;
+				break;
 		}
+	}
+
+	public Color(int colorNumber) throws CandyCleanException {
+		this(BackgroundColor.values()[colorNumber]);
+	}
+
+	public String getColorStr() {
+		return this.colorStr;
+	}
+
+	public void setColorStr(String colorStr) {
+		this.colorStr = colorStr;
+	}
+
+	private void setColorWithBackground() throws CandyCleanException {
+
 	}
 
 	@Override
@@ -72,10 +63,5 @@ public class Color {
 
 	public void setToBlank() {
 		this.colorStr = Constants.BLACK;
-		this.backgroundColor = BackgroundColor.BLACK;
-	}
-
-	public boolean isBlank() {
-		return this.backgroundColor == BackgroundColor.BLACK;
 	}
 }

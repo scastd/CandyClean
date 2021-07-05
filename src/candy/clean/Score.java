@@ -5,6 +5,7 @@ public class Score {
 	private int streak;
 	private int multiplier;
 
+	// Todo: añadir objetivo
 	public Score() {
 		this.totalScore = 0;
 		this.streak = 0;
@@ -37,11 +38,15 @@ public class Score {
 
 	public void incrementScore() {
 		this.totalScore += Constants.BASE_SCORE * this.multiplier;
-		this.multiplier++;
 		this.streak++;
+
+		if (this.streak % 5 == 0)
+			this.multiplier += 1;
+		if (this.streak % 15 == 0)
+			this.multiplier += 3;
 	}
 
-	public void noScore() {
+	public void resetScore() {
 		this.multiplier = 1;
 		this.streak = 0;
 	}

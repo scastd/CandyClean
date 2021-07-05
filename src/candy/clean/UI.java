@@ -42,7 +42,7 @@ public class UI {
 			logger.trace("Enter the column to shoot");
 			int column = Integer.parseInt(Keyboard.read().trim());
 
-			this.game.getBoard().shoot(row, column);
+			this.game.shoot(row, column);
 		} catch (NumberFormatException e) {
 		    throw new CandyCleanException(String.format("Please introduce a number between %d and %d",
 				    Constants.MIN_POS, Constants.getCurrentSize() - 1));

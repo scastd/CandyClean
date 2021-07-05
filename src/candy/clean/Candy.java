@@ -58,22 +58,16 @@ public class Candy {
 				break;
 
 			default:
-				throw new CandyCleanException("Incorrect color");
+				this.color = new Color(BackgroundColor.BLACK);
 		}
 	}
 
-	public String toString(String str) {
-		return this.color.toString() + str + Constants.RESET;
+	public void setToBlank() throws CandyCleanException {
+		this.setLetterAndColor('E');
 	}
 
-	public void setToBlank() {
-		this.color.setToBlank();
-		this.letter = 'X';
-	}
-
-	@Override
-	public String toString() {
-		return this.color.toString() + this.letter + Constants.RESET;
+	public boolean isBlank() {
+		return this.letter == 'E';
 	}
 
 	@Override
@@ -85,7 +79,13 @@ public class Candy {
 		return false;
 	}
 
-	public boolean isBlank() {
-		return this.color.isBlank();
+	// Todo: Mover los toString a Color
+	public String toString(String str) {
+		return this.color.toString() + str + Constants.RESET;
+	}
+
+	@Override
+	public String toString() {
+		return this.color.toString() + this.letter + Constants.RESET;
 	}
 }

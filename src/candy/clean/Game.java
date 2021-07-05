@@ -1,8 +1,8 @@
 package candy.clean;
 
 public class Game {
-	private Board board;
-	private Score score;
+	private final Board board;
+	private final Score score;
 
 	public Game(Board board, Score score) {
 		this.board = board;
@@ -13,16 +13,12 @@ public class Game {
 		return this.board;
 	}
 
-	public void setBoard(Board board) {
-		this.board = board;
-	}
-
 	public Score getScore() {
 		return this.score;
 	}
 
-	public void setScore(Score score) {
-		this.score = score;
+	public void shoot(int row, int column) throws CandyCleanException {
+		this.board.shoot(row, column);
 	}
 
 	@Override

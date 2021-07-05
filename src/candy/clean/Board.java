@@ -3,7 +3,7 @@ package candy.clean;
 import org.jetbrains.annotations.NotNull;
 
 public class Board {
-	private final Candy[][] board;
+	private final Candy[][] table;
 	private final int size;
 	private final int numColors;
 
@@ -11,13 +11,13 @@ public class Board {
 		StringBuilder error = new StringBuilder();
 
 		if (size < Constants.MIN_SIZE || size > Constants.MAX_SIZE) {
-			error.append(String.format("Size must be between %d and %d (both inclusive)\n",
-					Constants.MIN_SIZE, Constants.MAX_SIZE));
+			error.append(String.format("Size must be between %d and %d (both inclusive)%s",
+					Constants.MIN_SIZE, Constants.MAX_SIZE, "\n"));
 		}
 
 		if (numColors < Constants.MIN_NUM_COLORS || numColors > Constants.MAX_NUM_COLORS) {
-			error.append(String.format("Number of colors must be between %d and %d (both inclusive)\n",
-					Constants.MIN_NUM_COLORS, Constants.MAX_NUM_COLORS));
+			error.append(String.format("Number of colors must be between %d and %d (both inclusive)%s",
+					Constants.MIN_NUM_COLORS, Constants.MAX_NUM_COLORS, "\n"));
 		}
 
 		if (error.length() > 0) {
@@ -25,11 +25,11 @@ public class Board {
 		}
 
 		if (predefined) {
-			this.board = this.generatePredefinedBoard();
-			this.size = this.board.length;
+			this.table = this.generatePredefinedBoard(); // Todo: Hacer predefinido en Game
+			this.size = this.table.length;
 			this.numColors = 3;
 		} else {
-			this.board = this.generateRandomBoard(size, numColors);
+			this.table = this.generateRandomBoard(size, numColors);
 			this.size = size;
 			this.numColors = numColors;
 		}
@@ -42,7 +42,7 @@ public class Board {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				candies[i][j] = new Candy(Math.abs(Constants.random.nextInt() % numColors));
+				candies[i][j] = new Candy(Math.abs(Constants.random.nextInt(numColors)));
 			}
 		}
 
@@ -62,6 +62,7 @@ public class Board {
 		return candies;
 	}
 
+	// Todo: Comprobar si hay caramelos del mismo color alrededor. Si se falla, actualizar puntuación
 	public void shoot(int row, int column) throws CandyCleanException {
 		if (this.areInvalidCoordinates(row, column)) {
 			throw new CandyCleanException("Invalid coordinates");
@@ -73,11 +74,11 @@ public class Board {
 		int lastBottomCandyPos = this.lastBottomCandyPos(row, column);
 
 		for (int i = firstLeftCandyPos; i < lastRightCandyPos; i++) {
-			this.board[row][i].setToBlank();
+			this.table[row][i].setToBlank();
 		}
 
 		for (int i = firstTopCandyPos; i < lastBottomCandyPos; i++) {
-			this.board[i][column].setToBlank();
+			this.table[i][column].setToBlank();
 		}
 		this.dropCandies(row,
 				column,
@@ -89,14 +90,14 @@ public class Board {
 	private int firstLeftCandyPos(int row, int column) {
 		boolean found = false;
 		int leftCandyPos = column;
-		char letter = this.board[row][column].getLetter();
+		char letter = this.table[row][column].getLetter();
 
 		while (!found) {
 			if (leftCandyPos == -1) {
 				break;
 			}
 
-			if (this.board[row][leftCandyPos].getLetter() == letter) {
+			if (this.table[row][leftCandyPos].getLetter() == letter) {
 				leftCandyPos--;
 			} else {
 				found = true;
@@ -109,14 +110,14 @@ public class Board {
 	private int lastRightCandyPos(int row, int column) {
 		boolean found = false;
 		int rightCandyPos = column;
-		char letter = this.board[row][column].getLetter();
+		char letter = this.table[row][column].getLetter();
 
 		while (!found) {
 			if (rightCandyPos == Constants.getCurrentSize()) {
 				break;
 			}
 
-			if (this.board[row][rightCandyPos].getLetter() == letter) {
+			if (this.table[row][rightCandyPos].getLetter() == letter) {
 				rightCandyPos++;
 			} else {
 				found = true;
@@ -129,14 +130,14 @@ public class Board {
 	private int firstTopCandyPos(int row, int column) {
 		boolean found = false;
 		int topCandyPos = row;
-		char letter = this.board[row][column].getLetter();
+		char letter = this.table[row][column].getLetter();
 
 		while (!found) {
 			if (topCandyPos == -1) {
 				break;
 			}
 
-			if (this.board[topCandyPos][column].getLetter() == letter) {
+			if (this.table[topCandyPos][column].getLetter() == letter) {
 				topCandyPos--;
 			} else {
 				found = true;
@@ -149,14 +150,14 @@ public class Board {
 	private int lastBottomCandyPos(int row, int column) {
 		boolean found = false;
 		int bottomCandyPos = row;
-		char letter = this.board[row][column].getLetter();
+		char letter = this.table[row][column].getLetter();
 
 		while (!found) {
 			if (bottomCandyPos == Constants.getCurrentSize()) {
 				break;
 			}
 
-			if (this.board[bottomCandyPos][column].getLetter() == letter) {
+			if (this.table[bottomCandyPos][column].getLetter() == letter) {
 				bottomCandyPos++;
 			} else {
 				found = true;
@@ -176,28 +177,30 @@ public class Board {
 	private void dropEachColumn(int initialRow, int column) throws CandyCleanException {
 		for (int i = initialRow; i >= 0; i--) {
 			if (i == 0) {
-				this.board[i][column] = new Candy(Math.abs(Constants.random.nextInt() % this.numColors));
+				this.table[i][column] = new Candy(Math.abs(Constants.random.nextInt(this.numColors)));
 			} else {
-				this.board[i][column] = this.board[i - 1][column]; // Exchange candies
+				this.table[i][column] = this.table[i - 1][column]; // Exchange candies
 			}
 		}
 	}
 
+	// Todo: Pasar como parámetro las coordenadas (Top y bottom), luego mover desde top hasta bottom
+	//  Y si top es 0, generar hasta bottom caramelos aleatorios
 	private void dropOneColumn(int column, int lastBottomCandyPos) throws CandyCleanException {
 		int count = 0;
 
 		for (int i = lastBottomCandyPos; i >= 0; i--) {
-			if (this.board[i][column].isBlank()) {
+			if (this.table[i][column].isBlank()) {
 				count++;
 			}
 		}
 
 		for (int i = lastBottomCandyPos; i > count; i--) {
-			this.board[i][column] = this.board[i - count][column];
+			this.table[i][column] = this.table[i - count][column];
 		}
 
 		for (int i = 0; i < count; i++) {
-			this.board[i][column] = new Candy(Math.abs(Constants.random.nextInt() % this.numColors));
+			this.table[i][column] = new Candy(Math.abs(Constants.random.nextInt(this.numColors)));
 		}
 	}
 
@@ -242,7 +245,7 @@ public class Board {
 
 			out.append(i).append("|");
 
-			for (Candy candy : this.board[i]) {
+			for (Candy candy : this.table[i]) {
 				out.append(candy.toString("  "));
 			}
 
@@ -253,4 +256,6 @@ public class Board {
 
 		return out.toString();
 	}
+
+	// Todo: Hacer método para hacer mejor debug en fichero
 }
