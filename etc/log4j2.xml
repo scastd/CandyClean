@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+  <Appenders>
+    
+    <!--Trace Level File Appender-->
+    <RollingFile name="RollingFileTrace" fileName="logs/app.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+
+      <PatternLayout>
+        <Pattern>%d{dd MMM yyyy HH:mm:ss} %p [%c{1}]: %m%n</Pattern>
+      </PatternLayout>
+
+      <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="DENY" onMismatch="ACCEPT"/>
+
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+
+  </RollingFile>
+  
+  <!--Warn Level File Appender-->
+	<RollingFile name="RollingFileWarn" fileName="logs/warns.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+
+      <PatternLayout>
+        <Pattern>%d{dd MMM yyyy HH:mm:ss} %p [%c{1}]: %m%n</Pattern>
+      </PatternLayout>
+
+      <LevelRangeFilter minLevel="FATAL" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+
+    </RollingFile>
+	
+	<!-- Console -->
+	<Console name="ConsoleOut" target="SYSTEM_OUT">
+      <PatternLayout pattern="%m%n"/>
+	  <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="DENY" onMismatch="ACCEPT"/>
+    </Console>
+  
+  </Appenders>
+
+  <Loggers>
+
+    <Root level="all">
+      <AppenderRef ref="RollingFileWarn"/>
+      <AppenderRef ref="RollingFileTrace"/>
+	  <AppenderRef ref="ConsoleOut"/>
+    </Root>
+
+  </Loggers>
+</Configuration>
