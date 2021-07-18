@@ -1,8 +1,11 @@
 package candy.clean;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class Board {
+	private static final Logger logger = LogManager.getLogger(Board.class);
 	private final Candy[][] table;
 	private final int size;
 	private final int numColors;
@@ -42,7 +45,7 @@ public class Board {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				candies[i][j] = new Candy(Math.abs(Constants.random.nextInt(numColors)));
+				candies[i][j] = new Candy(Constants.random.nextInt(numColors));
 			}
 		}
 
@@ -84,7 +87,7 @@ public class Board {
 				column,
 				firstLeftCandyPos,
 				lastRightCandyPos,
-				lastBottomCandyPos);
+				lastBottomCandyPos - 1);
 	}
 
 	private int firstLeftCandyPos(int row, int column) {
@@ -169,23 +172,22 @@ public class Board {
 
 	private void dropCandies(int row, int column, int firstLeftCandyPos, int lastRightCandyPos, int lastBottomCandyPos) throws CandyCleanException {
 		for (int i = firstLeftCandyPos; i < lastRightCandyPos; i++) {
-			this.dropEachColumn(row, i);
-			this.dropOneColumn(column, lastBottomCandyPos);
+			this.dropColumn(i, row);
 		}
+
+		this.dropOneColumn(column, lastBottomCandyPos);
 	}
 
-	private void dropEachColumn(int initialRow, int column) throws CandyCleanException {
+	private void dropColumn(int column, int initialRow) throws CandyCleanException {
 		for (int i = initialRow; i >= 0; i--) {
 			if (i == 0) {
-				this.table[i][column] = new Candy(Math.abs(Constants.random.nextInt(this.numColors)));
+				this.table[i][column] = new Candy(Constants.random.nextInt(this.numColors));
 			} else {
-				this.table[i][column] = this.table[i - 1][column]; // Exchange candies
+				this.table[i][column] = this.table[i - 1][column]; // Exchange candies. Take black candy to the top
 			}
 		}
 	}
 
-	// Todo: Pasar como parámetro las coordenadas (Top y bottom), luego mover desde top hasta bottom
-	//  Y si top es 0, generar hasta bottom caramelos aleatorios
 	private void dropOneColumn(int column, int lastBottomCandyPos) throws CandyCleanException {
 		int count = 0;
 
@@ -195,18 +197,14 @@ public class Board {
 			}
 		}
 
-		for (int i = lastBottomCandyPos; i > count; i--) {
-			this.table[i][column] = this.table[i - count][column];
-		}
-
 		for (int i = 0; i < count; i++) {
-			this.table[i][column] = new Candy(Math.abs(Constants.random.nextInt(this.numColors)));
+			this.dropColumn(column, lastBottomCandyPos);
 		}
 	}
 
 	private boolean areInvalidCoordinates(int row, int column) {
 		return (row < Constants.MIN_POS || row > Constants.getCurrentSize() - 1) ||
-				(column < Constants.MIN_POS || column > Constants.getCurrentSize() - 1);
+			   (column < Constants.MIN_POS || column > Constants.getCurrentSize() - 1);
 	}
 
 	@Override
@@ -255,6 +253,15 @@ public class Board {
 		out.replace(out.length() - 1, out.length(), ""); // Remove the last '\n'
 
 		return out.toString();
+	}
+
+	private void slowPrinting() throws CandyCleanException {
+		logger.trace(this);
+		try {
+			Thread.sleep(1200);
+		} catch (InterruptedException e) {
+			throw new CandyCleanException("Error while slow printing");
+		}
 	}
 
 	// Todo: Hacer método para hacer mejor debug en fichero
