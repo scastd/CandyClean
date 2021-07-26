@@ -22,7 +22,7 @@ Targets:
 
 ## Todo
 
-- Difficulty selector at the beginning of the game.
+- Bomb candies can stack up to 3 connected bombs (increment the radius).
 - Make an I/O file for writing the board to a file.
 - Tests for the basic functionality.
 - Graphical User Interface.

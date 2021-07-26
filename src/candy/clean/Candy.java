@@ -3,12 +3,13 @@ package candy.clean;
 public class Candy {
 	private Color color;
 	private char letter;
+	private int special = 0;
 
-	public Candy(char letter) throws CandyCleanException {
+	public Candy(char letter) {
 		this.setLetterAndColor(letter);
 	}
 
-	public Candy(int num) throws CandyCleanException {
+	public Candy(int num) {
 		char[] letters = {'R', 'G', 'Y', 'B', 'P', 'C', 'W'};
 		this.setLetterAndColor(letters[num]);
 	}
@@ -25,7 +26,7 @@ public class Candy {
 		return this.letter;
 	}
 
-	public void setLetterAndColor(char letter) throws CandyCleanException {
+	public void setLetterAndColor(char letter) {
 		this.letter = letter;
 
 		switch (letter) {
@@ -62,7 +63,15 @@ public class Candy {
 		}
 	}
 
-	public void setToBlank() throws CandyCleanException {
+	public int isSpecial() {
+		return this.special;
+	}
+
+	public void setSpecial(int special) {
+		this.special = special;
+	}
+
+	public void setToBlank() {
 		this.setLetterAndColor('E');
 	}
 
@@ -79,13 +88,12 @@ public class Candy {
 		return false;
 	}
 
-	// Todo: Mover los toString a Color
-	public String toString(String str) {
-		return this.color.toString() + str + Constants.RESET;
-	}
-
 	@Override
 	public String toString() {
-		return this.color.toString() + this.letter + Constants.RESET;
+		return this.toString(Character.toString(this.letter));
+	}
+
+	public String toString(String str) {
+		return this.color.toString(str);
 	}
 }

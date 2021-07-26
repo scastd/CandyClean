@@ -6,11 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class Board {
 	private static final Logger logger = LogManager.getLogger(Board.class);
+
 	private final Candy[][] table;
 	private final int size;
 	private final int numColors;
 
-	public Board(boolean predefined, int size, int numColors) throws CandyCleanException {
+	public Board(int size, int numColors) throws CandyCleanException {
 		StringBuilder error = new StringBuilder();
 
 		if (size < Constants.MIN_SIZE || size > Constants.MAX_SIZE) {
@@ -27,20 +28,24 @@ public class Board {
 			throw new CandyCleanException(error.toString());
 		}
 
-		if (predefined) {
-			this.table = this.generatePredefinedBoard(); // Todo: Hacer predefinido en Game
-			this.size = this.table.length;
-			this.numColors = 3;
-		} else {
-			this.table = this.generateRandomBoard(size, numColors);
-			this.size = size;
-			this.numColors = numColors;
-		}
+		this.table = this.generateRandomBoard(size, numColors);
+		this.size = size;
+		this.numColors = numColors;
 
 		Constants.setCurrentSize(this.size);
 	}
 
-	private @NotNull Candy[][] generateRandomBoard(int size, int numColors) throws CandyCleanException {
+	public Board(String[] board, int numColors) {
+		this.size = board[0].length();
+		this.numColors = numColors;
+		this.table = new Candy[this.size][this.size];
+
+		this.generateBoardFromString(board);
+
+		Constants.setCurrentSize(this.size);
+	}
+
+	private @NotNull Candy[][] generateRandomBoard(int size, int numColors) {
 		Candy[][] candies = new Candy[size][size];
 
 		for (int i = 0; i < size; i++) {
@@ -52,20 +57,14 @@ public class Board {
 		return candies;
 	}
 
-	private @NotNull Candy[][] generatePredefinedBoard() throws CandyCleanException {
-		String[] predefBoard = {"RRRG", "BBRR", "RBGG", "GBRR"};
-		Candy[][] candies = new Candy[4][4];
-
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				candies[i][j] = new Candy(predefBoard[i].charAt(j));
+	public void generateBoardFromString(String[] str) {
+		for (int i = 0; i < str.length; i++) {
+			for (int j = 0; j < str[i].length(); j++) {
+				this.table[i][j] = new Candy(str[i].charAt(j));
 			}
 		}
-
-		return candies;
 	}
 
-	// Todo: Comprobar si hay caramelos del mismo color alrededor. Si se falla, actualizar puntuación
 	public void shoot(int row, int column) throws CandyCleanException {
 		if (this.areInvalidCoordinates(row, column)) {
 			throw new CandyCleanException("Invalid coordinates");
@@ -76,6 +75,11 @@ public class Board {
 		int firstTopCandyPos = this.firstTopCandyPos(row, column);
 		int lastBottomCandyPos = this.lastBottomCandyPos(row, column);
 
+		if (!this.checkSurroundingCandies(firstLeftCandyPos, lastRightCandyPos,
+				firstTopCandyPos, lastBottomCandyPos)) {
+			throw new CandyCleanException("Insufficient surrounding candies in the specified position (minimum 3)");
+		}
+
 		for (int i = firstLeftCandyPos; i < lastRightCandyPos; i++) {
 			this.table[row][i].setToBlank();
 		}
@@ -83,11 +87,17 @@ public class Board {
 		for (int i = firstTopCandyPos; i < lastBottomCandyPos; i++) {
 			this.table[i][column].setToBlank();
 		}
+
 		this.dropCandies(row,
 				column,
 				firstLeftCandyPos,
 				lastRightCandyPos,
 				lastBottomCandyPos - 1);
+	}
+
+	private boolean checkSurroundingCandies(int firstLeftCandyPos, int lastRightCandyPos,
+	                                        int firstTopCandyPos, int lastBottomCandyPos) {
+		return (lastRightCandyPos - firstLeftCandyPos + 1 > 3) || (lastBottomCandyPos - firstTopCandyPos + 1 > 3);
 	}
 
 	private int firstLeftCandyPos(int row, int column) {
@@ -170,7 +180,7 @@ public class Board {
 		return bottomCandyPos;
 	}
 
-	private void dropCandies(int row, int column, int firstLeftCandyPos, int lastRightCandyPos, int lastBottomCandyPos) throws CandyCleanException {
+	private void dropCandies(int row, int column, int firstLeftCandyPos, int lastRightCandyPos, int lastBottomCandyPos) {
 		for (int i = firstLeftCandyPos; i < lastRightCandyPos; i++) {
 			this.dropColumn(i, row);
 		}
@@ -178,7 +188,7 @@ public class Board {
 		this.dropOneColumn(column, lastBottomCandyPos);
 	}
 
-	private void dropColumn(int column, int initialRow) throws CandyCleanException {
+	private void dropColumn(int column, int initialRow) {
 		for (int i = initialRow; i >= 0; i--) {
 			if (i == 0) {
 				this.table[i][column] = new Candy(Constants.random.nextInt(this.numColors));
@@ -188,7 +198,7 @@ public class Board {
 		}
 	}
 
-	private void dropOneColumn(int column, int lastBottomCandyPos) throws CandyCleanException {
+	private void dropOneColumn(int column, int lastBottomCandyPos) {
 		int count = 0;
 
 		for (int i = lastBottomCandyPos; i >= 0; i--) {
@@ -204,7 +214,7 @@ public class Board {
 
 	private boolean areInvalidCoordinates(int row, int column) {
 		return (row < Constants.MIN_POS || row > Constants.getCurrentSize() - 1) ||
-			   (column < Constants.MIN_POS || column > Constants.getCurrentSize() - 1);
+				(column < Constants.MIN_POS || column > Constants.getCurrentSize() - 1);
 	}
 
 	@Override
@@ -255,14 +265,22 @@ public class Board {
 		return out.toString();
 	}
 
-	private void slowPrinting() throws CandyCleanException {
+	private void slowPrinting() throws InterruptedException {
 		logger.trace(this);
-		try {
-			Thread.sleep(1200);
-		} catch (InterruptedException e) {
-			throw new CandyCleanException("Error while slow printing");
-		}
+		Thread.sleep(1200);
 	}
 
-	// Todo: Hacer método para hacer mejor debug en fichero
+	public String debugBoard() {
+		StringBuilder out = new StringBuilder("Debugging board\n");
+
+		for (Candy[] row : this.table) {
+			for (Candy candy : row) {
+				out.append(candy.getLetter());
+			}
+
+			out.append("\n");
+		}
+
+		return out.toString();
+	}
 }

@@ -3,7 +3,7 @@ package candy.clean;
 public class Color {
 	private String colorStr;
 
-	public Color(BackgroundColor backgroundColor) throws CandyCleanException {
+	public Color(BackgroundColor backgroundColor) {
 		switch (backgroundColor) {
 			case RED:
 				this.colorStr = Constants.RED;
@@ -40,7 +40,7 @@ public class Color {
 		}
 	}
 
-	public Color(int colorNumber) throws CandyCleanException {
+	public Color(int colorNumber) {
 		this(BackgroundColor.values()[colorNumber]);
 	}
 
@@ -52,13 +52,13 @@ public class Color {
 		this.colorStr = colorStr;
 	}
 
-	private void setColorWithBackground() throws CandyCleanException {
-
-	}
-
 	@Override
 	public String toString() {
-		return this.colorStr;
+		return this.colorStr + "  " + Constants.RESET;
+	}
+
+	public String toString(String str) {
+		return this.colorStr + str + Constants.RESET;
 	}
 
 	public void setToBlank() {

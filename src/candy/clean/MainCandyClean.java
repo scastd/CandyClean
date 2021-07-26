@@ -8,12 +8,14 @@ public class MainCandyClean {
 
 	public static void main(String[] args) {
 		try {
-			Game game = new Game(new Board(false, 12, 3), new Score());
-			UI ui = new UI(game);
-			ui.init();
+			new UI(new Game(new Board(5, 3), new Score(5000))).init();
 		} catch (CandyCleanException e) {
 			logger.error(e.getMessage());
 		}
+
+//		Game game = new Game();
+//		game.generatePredefinedBoard();
+//		new UI(game).init();
 	}
 }
 

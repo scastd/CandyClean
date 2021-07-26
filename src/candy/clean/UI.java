@@ -11,6 +11,10 @@ public class UI {
 		this.game = game;
 	}
 
+	public UI() {
+		this(null);
+	}
+
 	public Game getGame() {
 		return this.game;
 	}
@@ -21,15 +25,18 @@ public class UI {
 
 	public void init() {
 		logger.trace("Initializing the game");
+		this.showDifficulties();
+		logger.debug(this.game.getBoard().debugBoard());
 
-		while (game.getScore().getTotalScore() < 1000) {
+
+		while (!game.getScore().objectiveReached()) {
 			logger.trace("\n");
 			logger.trace(this.game);
 
 			try {
-			    this.shoot();
+				this.shoot();
 			} catch (CandyCleanException e) {
-			    logger.warn(e.getMessage());
+				logger.warn(Constants.ERROR + e.getMessage() + Constants.RESET);
 			}
 		}
 	}
@@ -44,8 +51,67 @@ public class UI {
 
 			this.game.shoot(row, column);
 		} catch (NumberFormatException e) {
-		    throw new CandyCleanException(String.format("Please introduce a number between %d and %d",
-				    Constants.MIN_POS, Constants.getCurrentSize() - 1));
+			throw new CandyCleanException(String.format("Please introduce a number between %d and %d",
+					Constants.MIN_POS, Constants.getCurrentSize() - 1));
 		}
+	}
+
+	private void showDifficulties() {
+		logger.trace("Select a difficulty:");
+		logger.trace("  1 - Very Easy");
+		logger.trace("  2 - Easy");
+		logger.trace("  3 - Medium");
+		logger.trace("  4 - Hard");
+		logger.trace("  5 - Very Hard");
+		logger.trace("  6 - Extreme");
+
+		try {
+			int difficulty;
+
+			do {
+				difficulty = Integer.parseInt(Keyboard.read());
+			} while (!this.generateGameFromDifficulty(difficulty));
+
+		} catch (CandyCleanException e) {
+			logger.warn(e.getMessage());
+		}
+	}
+
+	private boolean generateGameFromDifficulty(int difficulty) throws CandyCleanException {
+		int objectiveScore;
+		Board board;
+
+		switch (difficulty) {
+			case 1:
+				board = new Board(4, 2);
+				objectiveScore = 300;
+				break;
+			case 2:
+				board = new Board(6, 2);
+				objectiveScore = 600;
+				break;
+			case 3:
+				board = new Board(8, 3);
+				objectiveScore = 1200;
+				break;
+			case 4:
+				board = new Board(12, 4);
+				objectiveScore = 2700;
+				break;
+			case 5:
+				board = new Board(17, 5);
+				objectiveScore = 4000;
+				break;
+			case 6:
+				board = new Board(Constants.MAX_SIZE, 7);
+				objectiveScore = 10000;
+				break;
+
+			default:
+				return false;
+		}
+
+		this.game = new Game(board, new Score(objectiveScore));
+		return true;
 	}
 }
