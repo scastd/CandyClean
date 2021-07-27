@@ -21,6 +21,23 @@ public class Game {
 		return this.score;
 	}
 
+	public void generatePredefinedBoard() {
+		this.board = new Board(new String[] {
+				"GYYYGRRY",
+				"GYYRGYRG",
+				"YYYYYRYG",
+				"GYYRYGRR",
+				"RRGGGRYR",
+				"YRRYYGGY",
+				"GYGRRGRY",
+				"YGYRGRYG"}, 3);
+		this.score = new Score();
+	}
+
+	public boolean objectiveCompleted() {
+		return this.score.objectiveReached();
+	}
+
 	public void shoot(int row, int column) throws CandyCleanException {
 		try {
 			this.board.shoot(row, column);
@@ -28,13 +45,8 @@ public class Game {
 		} catch (CandyCleanException e) {
 			this.score.resetScore();
 
-		    throw new CandyCleanException(e.getMessage());
+			throw new CandyCleanException(e.getMessage());
 		}
-	}
-
-	public void generatePredefinedBoard() {
-		this.board = new Board(new String[]{"RRRG", "BBRR", "RBGG", "GBRR"}, 3);
-		this.score = new Score();
 	}
 
 	@Override

@@ -28,8 +28,7 @@ public class UI {
 		this.showDifficulties();
 		logger.debug(this.game.getBoard().debugBoard());
 
-
-		while (!game.getScore().objectiveReached()) {
+		while (!game.objectiveCompleted()) {
 			logger.trace("\n");
 			logger.trace(this.game);
 
@@ -39,6 +38,10 @@ public class UI {
 				logger.warn(Constants.ERROR + e.getMessage() + Constants.RESET);
 			}
 		}
+
+		logger.trace(this.game);
+
+		// Todo: mover la selección de la dificultad al main
 	}
 
 	private void shoot() throws CandyCleanException {
@@ -58,12 +61,12 @@ public class UI {
 
 	private void showDifficulties() {
 		logger.trace("Select a difficulty:");
-		logger.trace("  1 - Very Easy");
-		logger.trace("  2 - Easy");
-		logger.trace("  3 - Medium");
-		logger.trace("  4 - Hard");
-		logger.trace("  5 - Very Hard");
-		logger.trace("  6 - Extreme");
+		logger.trace(" 1 - Very Easy");
+		logger.trace(" 2 - Easy");
+		logger.trace(" 3 - Medium");
+		logger.trace(" 4 - Hard");
+		logger.trace(" 5 - Very Hard");
+		logger.trace(" 6 - Extreme");
 
 		try {
 			int difficulty;
