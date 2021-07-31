@@ -24,7 +24,7 @@
 	<property name="report.file" location="${coverage.result.report.dir}/${package}/index.html"/>
 
 
-	<!--Loading jacoco libraries -->
+	<!-- Loading jacoco libraries -->
 	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
 		<classpath path="${lib.dir}/jacocoant.jar"/>
 	</taskdef>
@@ -54,7 +54,8 @@
 		</javac>
 
 		<!--
-			Un-jars the log4j libraries and copies the log4j.xml file to classes. Used to be able to execute the command:
+			Un-jars the log4j libraries and copies the log4j.xml file to classes.
+			Used to be able to execute the command:
 			java -cp classes candy.clean.MainCandyClean
 		-->
 		<unjar dest="${classes.dir}">
