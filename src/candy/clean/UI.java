@@ -1,11 +1,13 @@
 package candy.clean;
 
+import candy.clean.sql.DBAccess;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class UI {
 	private static final Logger logger = LogManager.getLogger(UI.class);
 	private Game game;
+	private DBAccess dbAccess;
 
 	public UI(Game game) {
 		this.game = game;
@@ -23,8 +25,18 @@ public class UI {
 		this.game = game;
 	}
 
+	public DBAccess getDbAccess() {
+		return this.dbAccess;
+	}
+
+	public void setDbAccess(DBAccess dbAccess) {
+		this.dbAccess = dbAccess;
+	}
+
 	public void init() {
 		logger.trace("Initializing the game");
+		this.dbAccess.getTop3Users();
+		this.registerUser();
 		this.showDifficulties();
 		logger.debug(this.game.getBoard().debugBoard());
 
@@ -35,13 +47,11 @@ public class UI {
 			try {
 				this.shoot();
 			} catch (CandyCleanException e) {
-				logger.warn(Constants.ERROR + e.getMessage() + Constants.RESET);
+				logger.warn(e.getMessage());
 			}
 		}
 
 		logger.trace(this.game);
-
-		// Todo: mover la selección de la dificultad al main
 	}
 
 	private void shoot() throws CandyCleanException {
@@ -115,6 +125,20 @@ public class UI {
 		}
 
 		this.game = new Game(board, new Score(objectiveScore));
+
 		return true;
+	}
+
+	private void registerUser() {
+		logger.trace("Enter the username");
+		String name = "";
+
+		try {
+			name = Keyboard.read().trim();
+		} catch (CandyCleanException e) {
+			logger.warn(e.getMessage());
+		}
+
+		this.dbAccess.registerUser(name);
 	}
 }

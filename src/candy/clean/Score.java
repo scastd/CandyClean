@@ -1,7 +1,7 @@
 package candy.clean;
 
 public class Score {
-	private int totalScore;
+	private int currentScore;
 	private int streak;
 	private int multiplier;
 	private int objective;
@@ -11,18 +11,18 @@ public class Score {
 	}
 
 	public Score(int objective) {
-		this.totalScore = 0;
+		this.currentScore = 0;
 		this.streak = 0;
 		this.multiplier = 1;
 		this.objective = objective;
 	}
 
-	public int getTotalScore() {
-		return this.totalScore;
+	public int getCurrentScore() {
+		return this.currentScore;
 	}
 
-	public void setTotalScore(int totalScore) {
-		this.totalScore = totalScore;
+	public void setCurrentScore(int currentScore) {
+		this.currentScore = currentScore;
 	}
 
 	public int getStreak() {
@@ -50,11 +50,11 @@ public class Score {
 	}
 
 	public boolean objectiveReached() {
-		return this.totalScore >= this.objective;
+		return this.currentScore >= this.objective;
 	}
 
 	public void incrementScore() {
-		this.totalScore += Constants.BASE_SCORE * this.multiplier;
+		this.currentScore += Constants.BASE_SCORE * this.multiplier;
 		this.streak++;
 
 		if (this.streak % 5 == 0)
@@ -71,6 +71,6 @@ public class Score {
 
 	@Override
 	public String toString() {
-		return "Score: " + this.totalScore + "/" + this.objective + " | Multiplier: x" + this.multiplier + " | Streak: " + this.streak;
+		return "Score: " + this.currentScore + "/" + this.objective + " | Multiplier: x" + this.multiplier + " | Streak: " + this.streak;
 	}
 }

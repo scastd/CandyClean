@@ -52,16 +52,16 @@ public class Color {
 		this.colorStr = colorStr;
 	}
 
+	public void setToBlank() {
+		this.colorStr = Constants.BLACK;
+	}
+
 	@Override
 	public String toString() {
-		return this.colorStr + "  " + Constants.RESET;
+		return this.toString("  ");
 	}
 
 	public String toString(String str) {
 		return this.colorStr + str + Constants.RESET;
-	}
-
-	public void setToBlank() {
-		this.colorStr = Constants.BLACK;
 	}
 }

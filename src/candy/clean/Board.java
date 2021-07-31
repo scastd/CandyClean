@@ -57,17 +57,18 @@ public class Board {
 		return candies;
 	}
 
-	public void generateBoardFromString(String[] str) {
-		for (int i = 0; i < str.length; i++) {
-			for (int j = 0; j < str[i].length(); j++) {
-				this.table[i][j] = new Candy(str[i].charAt(j));
+	private void generateBoardFromString(String[] boardStr) {
+		for (int i = 0; i < boardStr.length; i++) {
+			for (int j = 0; j < boardStr[i].length(); j++) {
+				this.table[i][j] = new Candy(boardStr[i].charAt(j));
 			}
 		}
 	}
 
 	public void shoot(int row, int column) throws CandyCleanException {
 		if (this.areInvalidCoordinates(row, column)) {
-			throw new CandyCleanException("Invalid coordinates");
+			throw new CandyCleanException(String.format("Invalid coordinates, they must be between %d and %d",
+					Constants.MIN_POS, Constants.getCurrentSize() - 1));
 		}
 
 		int firstLeftCandyPos = this.firstLeftCandyPos(row, column);
@@ -80,21 +81,33 @@ public class Board {
 			throw new CandyCleanException("Insufficient surrounding candies in the specified position (minimum 3)");
 		}
 
-		this.makeSpecialCandy(firstLeftCandyPos, lastRightCandyPos, firstTopCandyPos, lastBottomCandyPos, row, column);
+		this.makeSpecialCandy(row, column, firstLeftCandyPos, lastRightCandyPos, firstTopCandyPos, lastBottomCandyPos);
 
+		this.removeCandies(row, column, firstLeftCandyPos,
+				lastRightCandyPos,
+				firstTopCandyPos,
+				lastBottomCandyPos);
+
+		this.dropCandies(row, column, firstLeftCandyPos, lastRightCandyPos, lastBottomCandyPos);
+	}
+
+	private void removeCandies(int row, int column, int firstLeftCandyPos,
+	                           int lastRightCandyPos, int firstTopCandyPos, int lastBottomCandyPos) throws CandyCleanException {
 		for (int i = firstLeftCandyPos; i <= lastRightCandyPos; i++) {
-			if (!this.table[row][i].isSpecial()) {
+			if (this.table[row][i].isSpecial()) {
+//				this.shoot(row, i);
+			} else {
 				this.table[row][i].setToBlank(); // If not special, break it
 			}
 		}
 
 		for (int i = firstTopCandyPos; i <= lastBottomCandyPos; i++) {
-			if (!this.table[i][column].isSpecial()) {
+			if (this.table[i][column].isSpecial()) {
+//				this.shoot(i, column);
+			} else {
 				this.table[i][column].setToBlank(); // If not special, break it
 			}
 		}
-
-		this.dropCandies(row, column, firstLeftCandyPos, lastRightCandyPos, lastBottomCandyPos);
 	}
 
 	private boolean checkSurroundingCandies(int firstLeftCandyPos, int lastRightCandyPos,
@@ -185,7 +198,7 @@ public class Board {
 	}
 
 	private void dropCandies(int row, int column, int firstLeftCandyPos, int lastRightCandyPos, int lastBottomCandyPos) {
-		for (int i = firstLeftCandyPos; i <= lastRightCandyPos; i++) { // Todo: añadido el =
+		for (int i = firstLeftCandyPos; i <= lastRightCandyPos; i++) {
 			if (this.table[row][i].isSpecial()) {
 				this.dropColumnsInRow(i, row - 1);
 			} else {
@@ -204,7 +217,6 @@ public class Board {
 				Candy old = this.table[i][column];
 				this.table[i][column] = this.table[i - 1][column]; // Exchange candies. Take black candy to the top
 				this.table[i - 1][column] = old;
-				// Todo: método para intercambiar los caramelos
 			}
 		}
 	}
@@ -228,21 +240,20 @@ public class Board {
 				(column < Constants.MIN_POS || column > Constants.getCurrentSize() - 1);
 	}
 
-	private void makeSpecialCandy(int firstLeftCandyPos, int lastRightCandyPos,
-	                              int firstTopCandyPos, int lastBottomCandyPos,
-	                              int row, int column) {
+	private void makeSpecialCandy(int row, int column, int firstLeftCandyPos, int lastRightCandyPos,
+	                              int firstTopCandyPos, int lastBottomCandyPos) {
 		// Check for ROW special candy
 		boolean rowCandy = lastRightCandyPos - firstLeftCandyPos + 1 >= Constants.MIN_CANDIES_FOR_SPECIAL;
 
 		// Check for COLUMN special candy
 		boolean columnCandy = lastBottomCandyPos - firstTopCandyPos + 1 >= Constants.MIN_CANDIES_FOR_SPECIAL;
 
-		// Check for ROW_COLUMN special candy (if ROW and COLUMN make this type)
+		// Check for ROW_COLUMN special candy
 		if (rowCandy && columnCandy) {
 			this.table[row][column].setSpecial(Constants.ROW_COLUMN);
 		} else if (rowCandy) {
 			this.table[row][column].setSpecial(Constants.ROW);
-		} else if (columnCandy) { // Todo: Comentario -> Añadida la condición porque si no se crea columna siempre
+		} else if (columnCandy) {
 			this.table[row][column].setSpecial(Constants.COLUMN);
 		}
 
