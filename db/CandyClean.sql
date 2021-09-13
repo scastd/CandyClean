@@ -17,3 +17,5 @@ CREATE TABLE games
 	score     mediumint          NOT NULL
 );
 
+select * from users;
+

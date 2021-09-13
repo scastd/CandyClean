@@ -15,6 +15,8 @@ Targets:
 - Break candies of the same color in area.
 - Have special candies for breaking rows and columns.
 - Have obstacles in the board.
+- Diagonal special candies.
+- Special candy to invert colors.
 
 ## Links
 
@@ -22,8 +24,6 @@ Targets:
 
 ## Todo
 
-- Bomb candies can stack up to 3 connected bombs (increment the radius).
-- Make an I/O file for writing the board to a file.
 - Tests for the basic functionality.
 - Graphical User Interface.
 

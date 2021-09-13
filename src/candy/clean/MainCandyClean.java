@@ -9,7 +9,6 @@ public class MainCandyClean {
 
 	public static void main(String[] args) {
 		DBAccess dbAccess = new DBAccess();
-		Runtime.getRuntime().addShutdownHook(new Thread(dbAccess::closeConnection));
 
 		UI ui = new UI();
 		ui.setDbAccess(dbAccess);

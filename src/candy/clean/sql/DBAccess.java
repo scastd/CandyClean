@@ -18,6 +18,8 @@ public class DBAccess {
 	private ResultSet rs;
 
 	public DBAccess() {
+		Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnection));
+
 		this.openConnection();
 	}
 

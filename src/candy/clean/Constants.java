@@ -8,8 +8,6 @@ public final class Constants {
 	}
 
 	public static final String BLACK_BLINK = "\u001B[30;5m";
-	public static final String INFO = "\u001B[36m";
-	public static final String ERROR = "\u001B[31m";
 
 	public static final String BLACK = "\u001B[40m";
 	public static final String RED = "\u001B[41m";
@@ -31,18 +29,12 @@ public final class Constants {
 	public static final int MAX_NUM_COLORS = 7;
 	public static final int MIN_CANDIES_FOR_BREAK = 3;
 
-	/**
-	 * Special candy types
-	 */
-	public static final int NORMAL_CANDY = 0;
-	public static final int ROW = 1;
-	public static final int COLUMN = 2;
-	public static final int ROW_COLUMN = 3;
-	public static final int BOMB = 4;
-	public static final int FULL_BOARD = 5;
 	public static final int MIN_CANDIES_FOR_SPECIAL = 4;
-	public static final int BOMB_RADIUS = 1; // Could stack with other bomb candies
-	public static final int BOMB_LIMIT = 3;
+
+	public static final int LEFT = 0;
+	public static final int TOP = 1;
+	public static final int RIGHT = 2;
+	public static final int BOTTOM = 3;
 
 	private static int currentSize;
 

@@ -63,6 +63,7 @@ public class UI {
 			int column = Integer.parseInt(Keyboard.read().trim());
 
 			this.game.shoot(row, column);
+			logger.debug("Coordinates of shot: {} {}", row, column);
 		} catch (NumberFormatException e) {
 			throw new CandyCleanException(String.format("Please introduce a number between %d and %d",
 					Constants.MIN_POS, Constants.getCurrentSize() - 1));
@@ -93,6 +94,7 @@ public class UI {
 	private boolean generateGameFromDifficulty(int difficulty) throws CandyCleanException {
 		int objectiveScore;
 		Board board;
+		// Todo: extract parameters to 2 variables and create board at the end
 
 		switch (difficulty) {
 			case 1:

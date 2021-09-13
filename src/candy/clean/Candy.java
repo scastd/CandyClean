@@ -3,7 +3,7 @@ package candy.clean;
 public class Candy {
 	private Color color;
 	private char letter;
-	private int special = Constants.NORMAL_CANDY;
+	private CandyType special = CandyType.NORMAL_CANDY;
 
 	public Candy(char letter) {
 		this.setLetterAndColor(letter);
@@ -63,11 +63,15 @@ public class Candy {
 		}
 	}
 
-	public boolean isSpecial() {
-		return this.special != Constants.NORMAL_CANDY;
+	public CandyType getSpecial() {
+		return this.special;
 	}
 
-	public void setSpecial(int special) {
+	public boolean isSpecial() {
+		return this.special != CandyType.NORMAL_CANDY;
+	}
+
+	public void setSpecial(CandyType special) {
 		this.special = special;
 	}
 
@@ -94,23 +98,23 @@ public class Candy {
 
 		if (this.isSpecial()) {
 			switch (this.special) {
-				case Constants.ROW:
+				case ROW:
 					out = Constants.BLACK_BLINK + "RR";
 					break;
 
-				case Constants.COLUMN:
+				case COLUMN:
 					out = Constants.BLACK_BLINK + "CC";
 					break;
 
-				case Constants.ROW_COLUMN:
+				case ROW_COLUMN:
 					out = Constants.BLACK_BLINK + "RC";
 					break;
 
-				case Constants.BOMB:
+				case BOMB:
 					out = Constants.BLACK_BLINK + "BB";
 					break;
 
-				case Constants.FULL_BOARD:
+				case FULL_BOARD:
 					out = Constants.BLACK_BLINK + "FF";
 					break;
 

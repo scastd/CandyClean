@@ -51,6 +51,6 @@ public class Game {
 
 	@Override
 	public String toString() {
-		return Constants.INFO + this.score.toString() + Constants.RESET + "\n\n" + this.board.toString();
+		return this.score.toString() + "\n\n" + this.board.toString();
 	}
 }
